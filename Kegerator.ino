@@ -48,10 +48,10 @@ Distributed as-is; no warranty is given.
 #define IP_ADDR_LEN     4   // Length of IP address in bytes
 
 // Constants
-char ap_ssid[] = "SAP-Guest";                  // SSID of network
-char ap_password[] = "";          // Password of network
-// unsigned int ap_security = WLAN_SEC_WPA2; // Security of network
-unsigned int ap_security = WLAN_SEC_UNSEC; // Security of network
+char ap_ssid[] = "DevRel2Go";                  // SSID of network
+char ap_password[] = "21119709";          // Password of network
+unsigned int ap_security = WLAN_SEC_WPA2; // Security of network
+// unsigned int ap_security = WLAN_SEC_UNSEC; // Security of network
 unsigned int timeout = 30000;             // Milliseconds
 char *server = "ec2-52-7-151-201.compute-1.amazonaws.com";
 int port = 8000;
@@ -65,7 +65,7 @@ int tcpConnectFails = 0;
 // Pin for temperature sensort
 
 #define aref_voltage 5.0
-int temperatureSensorPin = 0;
+int temperatureSensorPin = 0;   // Analog pin 0
 
 // Pin for door switch
 
@@ -83,10 +83,61 @@ char *pourService = "flow";
 String authorization = "Basic U1lTVEVNOmFEajM3c1Fr";
 String content_type = "application/json";
 
+// Flow sensor setup.
+
+// which pin to use for reading the sensor? can use any pin!
+#define FLOWSENSORPIN 3
+
+// Have we finished the pour?
+#define meterLatency (100)
+#define POUR_MINIMUM (.40)
+int noPulseCount = 0;
+// count how many pulses!
+volatile uint16_t pulses = 0;
+// track the state of the pulse pin
+volatile uint8_t lastflowpinstate;
+// you can try to keep time of how long it is between pulses
+volatile uint32_t lastflowratetimer = 0;
+// and use that to calculate a flow rate
+volatile float flowrate;
+// Interrupt is called once a millisecond, looks for any pulses from the sensor!
+SIGNAL(TIMER0_COMPA_vect) {
+  uint8_t x = digitalRead(FLOWSENSORPIN);
+
+  if (x == lastflowpinstate) {
+    noPulseCount++;
+    lastflowratetimer++;
+    return; // nothing changed!
+  }
+
+  if (x == HIGH) {
+    //low to high transition!
+    noPulseCount = 0;
+    pulses++;
+  }
+
+  lastflowpinstate = x;
+  flowrate = 1000.0;
+  flowrate /= lastflowratetimer;  // in hertz
+  lastflowratetimer = 0;
+}
+
+void useInterrupt(boolean v) {
+  if (v) {
+    // Timer0 is already used for millis() - we'll just interrupt somewhere
+    // in the middle and call the "Compare A" function above
+    OCR0A = 0xAF;
+    TIMSK0 |= _BV(OCIE0A);
+  } else {
+    // do not call the interrupt function COMPA anymore
+    TIMSK0 &= ~_BV(OCIE0A);
+  }
+}
+
+
 void setup() {
 
   ConnectionInfo connection_info;
-  int i;
 
   // Initialize Serial port
   Serial.begin(115200);
@@ -117,7 +168,7 @@ void setup() {
     while (true) {;}  // Don't go any further
   } else {
     Serial.print("IP Address: ");
-    for (i = 0; i < IP_ADDR_LEN; i++) {
+    for (int i = 0; i < IP_ADDR_LEN; i++) {
       Serial.print(connection_info.ip_address[i]);
       if ( i < IP_ADDR_LEN - 1 ) {
         Serial.print(".");
@@ -129,6 +180,13 @@ void setup() {
   // Set up the door sensor.
 
   pinMode(doorSwitchPin, INPUT);
+
+  // Set up the flow sensor.
+
+  pinMode(FLOWSENSORPIN, INPUT);
+  digitalWrite(FLOWSENSORPIN, HIGH);
+  lastflowpinstate = digitalRead(FLOWSENSORPIN);
+  useInterrupt(true);
 
 }
 
@@ -244,6 +302,16 @@ void loop() {
   }
 
   // If there is a pour event, post it.
+
+  if (noPulseCount >= meterLatency && pulses != 0) {
+    float gallons = pulses / 10200.0;
+    float ounces = gallons * 128.0;
+    // Ignore pours less than some number of ounces
+    if (ounces > POUR_MINIMUM) {
+      PostToPour(ounces);
+    }
+    pulses = 0;
+  }
 
   // Post the temperature all the time.
 
