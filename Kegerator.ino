@@ -62,7 +62,7 @@ SFE_CC3000_Client client = SFE_CC3000_Client(wifi);
 #define MAX_TCP_CONNECT_RETRIES 10
 int tcpConnectFails = 0;
 
-// Pin for temperature sensort
+// Pin for temperature sensor
 
 #define aref_voltage 5.0
 int temperatureSensorPin = 0;   // Analog pin 0
