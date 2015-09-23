@@ -88,33 +88,35 @@ String content_type = "application/json";
 
 // Flow sensor setup.
 
-// which pin to use for reading the sensor? can use any pin!
+// Digital pin to use for reading the sensor.
 #define FLOWSENSORPIN 4
 
 // Have we finished the pour?
 #define meterLatency (100)
 #define POUR_MINIMUM (.40)
 int noPulseCount = 0;
-// count how many pulses!
+// Number of pulses
 volatile uint16_t pulses = 0;
-// track the state of the pulse pin
+// State of the flow pin
 volatile uint8_t lastflowpinstate;
-// you can try to keep time of how long it is between pulses
+// Time of the last pulse
 volatile uint32_t lastflowratetimer = 0;
-// and use that to calculate a flow rate
+// Rate of flow
 volatile float flowrate;
-// Interrupt is called once a millisecond, looks for any pulses from the sensor!
+// Interrupt is called once a millisecond.  Checks to see if there
+// is a pulse.  If so, update the time and increment the pulse count.
 SIGNAL(TIMER0_COMPA_vect) {
   uint8_t x = digitalRead(FLOWSENSORPIN);
 
   if (x == lastflowpinstate) {
+    // Nothing changed
     noPulseCount++;
     lastflowratetimer++;
-    return; // nothing changed!
+    return;
   }
 
   if (x == HIGH) {
-    //low to high transition!
+    // Low to high transition
     noPulseCount = 0;
     pulses++;
   }
@@ -137,7 +139,6 @@ void useInterrupt(boolean v) {
   }
 }
 
-
 void setup() {
 
   ConnectionInfo connection_info;
@@ -154,7 +155,7 @@ void setup() {
     Serial.println("CC3000 initialization complete");
   } else {
     Serial.println("Something went wrong during CC3000 init!  Halting.");
-    while (true) {;}  // Don't go any further
+    while (1);  // Don't go any further
   }
 
   // Connect using DHCP
@@ -162,13 +163,13 @@ void setup() {
   Serial.println(ap_ssid);
   if(!wifi.connect(ap_ssid, ap_security, ap_password, timeout)) {
     Serial.println("Error: Could not connect to AP.  Halting.");
-    while (true) {;}  // Don't go any further
+    while (1);  // Don't go any further
   }
 
   // Gather connection details and print IP address
   if ( !wifi.getConnectionInfo(connection_info) ) {
     Serial.println("Error: Could not obtain connection details.  Halting.");
-    while (true) {;}  // Don't go any further
+    while (1);  // Don't go any further
   } else {
     Serial.print("IP Address: ");
     for (int i = 0; i < IP_ADDR_LEN; i++) {
@@ -206,7 +207,7 @@ void PostToService(char *service, String body) {
     tcpConnectFails++;
     if (tcpConnectFails > MAX_TCP_CONNECT_RETRIES) {
       Serial.println("Halting.");
-      while (true) {;}  // Don't go any further
+      while (1);  // Don't go any further
     }
     return;
   } else {
