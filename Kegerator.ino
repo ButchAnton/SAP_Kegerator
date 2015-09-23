@@ -1,6 +1,6 @@
 /****************************************************************
 Kegerator.ino
-IoT enabled Kegerator.  Provices the following data:
+IoT enabled Kegerator.  Provides the following data:
 - Temperature
 - Door state
 - Volume of pour
@@ -48,12 +48,15 @@ Distributed as-is; no warranty is given.
 #define IP_ADDR_LEN     4   // Length of IP address in bytes
 
 // Constants
-char ap_ssid[] = "DevRel2Go";                  // SSID of network
-char ap_password[] = "21119709";          // Password of network
-unsigned int ap_security = WLAN_SEC_WPA2; // Security of network
-// unsigned int ap_security = WLAN_SEC_UNSEC; // Security of network
+// char ap_ssid[] = "DevRel2Go";                  // SSID of network
+char ap_ssid[] = "SAP-Guest";                  // SSID of network
+// char ap_password[] = "21119709";          // Password of network
+char ap_password[] = "";          // Password of network
+// unsigned int ap_security = WLAN_SEC_WPA2; // Security of network
+unsigned int ap_security = WLAN_SEC_UNSEC; // Security of network
 unsigned int timeout = 30000;             // Milliseconds
 char *server = "ec2-52-7-151-201.compute-1.amazonaws.com";
+// IPAddress server(10,0,1,102);
 int port = 8000;
 
 // Global Variables
@@ -86,7 +89,7 @@ String content_type = "application/json";
 // Flow sensor setup.
 
 // which pin to use for reading the sensor? can use any pin!
-#define FLOWSENSORPIN 3
+#define FLOWSENSORPIN 4
 
 // Have we finished the pour?
 #define meterLatency (100)
@@ -250,7 +253,7 @@ void PostToService(char *service, String body) {
 
 void PostToTemp(float temp) { // temp is in degrees C
   String body = "{ \"MeasureID\" : \"-1\", \"Temp\" : \"" + String(temp) + "\", \"Unit\" : \"C\" }";
-  PostToService(tempService, body);
+  // PostToService(tempService, body);
 }
 
 void PostToPour(float volume) { // volume is in ounces
@@ -260,7 +263,7 @@ void PostToPour(float volume) { // volume is in ounces
 
 void PostToDoor(int doorOpen) { // 1 == true, the door is open
   String body = "{ \"ActivityID\" : \"-1\", \"Open\" : " + String(doorOpen) + " }";
-  PostToService(doorService, body);
+  // PostToService(doorService, body);
 }
 
 // Sensor functions
@@ -323,7 +326,7 @@ void loop() {
     Serial.println("Error: Could not close socket");
   }
 
-  // Sleep 10 seconds before sending the next reading.
+  // Sleep 1 second before sending the next reading.
 
   // delay(10000);
   delay(1000);
