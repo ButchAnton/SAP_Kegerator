@@ -1,0 +1,2 @@
+1. NODE_PATH=/usr/local/lib/node_modules
+2. Run as root: sudo NODE_PATH=/usr/local/lib/node_modules node simple_flow_sensor_test.js

@@ -1,0 +1,70 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '-g',
+1 verbose cli   'powerline.vim' ]
+2 info using npm@1.4.21
+3 info using node@v0.10.38
+4 verbose cache add [ 'powerline.vim', null ]
+5 verbose cache add name=undefined spec="powerline.vim" args=["powerline.vim",null]
+6 verbose parsed url { protocol: null,
+6 verbose parsed url   slashes: null,
+6 verbose parsed url   auth: null,
+6 verbose parsed url   host: null,
+6 verbose parsed url   port: null,
+6 verbose parsed url   hostname: null,
+6 verbose parsed url   hash: null,
+6 verbose parsed url   search: null,
+6 verbose parsed url   query: null,
+6 verbose parsed url   pathname: 'powerline.vim',
+6 verbose parsed url   path: 'powerline.vim',
+6 verbose parsed url   href: 'powerline.vim' }
+7 silly lockFile 7855b589-powerline-vim powerline.vim
+8 verbose lock powerline.vim /root/.npm/7855b589-powerline-vim.lock
+9 silly lockFile 7855b589-powerline-vim powerline.vim
+10 silly lockFile 7855b589-powerline-vim powerline.vim
+11 verbose addNamed [ 'powerline.vim', '' ]
+12 verbose addNamed [ null, '*' ]
+13 silly lockFile f847d233-powerline-vim powerline.vim@
+14 verbose lock powerline.vim@ /root/.npm/f847d233-powerline-vim.lock
+15 silly addNameRange { name: 'powerline.vim', range: '*', hasData: false }
+16 verbose request where is /powerline.vim
+17 verbose request registry https://registry.npmjs.org/
+18 verbose request id fbccd3b13a4f80c8
+19 verbose url raw /powerline.vim
+20 verbose url resolving [ 'https://registry.npmjs.org/', './powerline.vim' ]
+21 verbose url resolved https://registry.npmjs.org/powerline.vim
+22 verbose request where is https://registry.npmjs.org/powerline.vim
+23 info trying registry request attempt 1 at 10:20:33
+24 http GET https://registry.npmjs.org/powerline.vim
+25 http 404 https://registry.npmjs.org/powerline.vim
+26 silly registry.get cb [ 404,
+26 silly registry.get   { 'content-type': 'application/json',
+26 silly registry.get     'cache-control': 'max-age=0',
+26 silly registry.get     'content-length': '2',
+26 silly registry.get     'accept-ranges': 'bytes',
+26 silly registry.get     date: 'Fri, 04 Dec 2015 18:20:34 GMT',
+26 silly registry.get     via: '1.1 varnish',
+26 silly registry.get     age: '0',
+26 silly registry.get     connection: 'keep-alive',
+26 silly registry.get     'x-served-by': 'cache-sjc3124-SJC',
+26 silly registry.get     'x-cache': 'MISS',
+26 silly registry.get     'x-cache-hits': '0',
+26 silly registry.get     'x-timer': 'S1449253234.098467,VS0,VE114' } ]
+27 silly lockFile f847d233-powerline-vim powerline.vim@
+28 silly lockFile f847d233-powerline-vim powerline.vim@
+29 error 404 Not Found
+29 error 404
+29 error 404 'powerline.vim' is not in the npm registry.
+29 error 404 You should bug the author to publish it
+29 error 404
+29 error 404 Note that you can also install from a
+29 error 404 tarball, folder, or http url, or git url.
+30 error System Linux 3.8.13-bone50
+31 error command "/usr/bin/nodejs" "/usr/bin/npm" "install" "-g" "powerline.vim"
+32 error cwd /home/butch/src/SAP/kegerator
+33 error node -v v0.10.38
+34 error npm -v 1.4.21
+35 error code E404
+36 verbose exit [ 1, true ]
